@@ -1,0 +1,174 @@
+from keras.preprocessing.image import load_img
+from keras.preprocessing.image import img_to_array
+from keras.models import load_model
+import matplotlib.pyplot as plt
+import numpy as np
+from keras.utils                  import np_utils
+from keras.datasets               import cifar10
+from keras.utils                  import np_utils
+from keras.models                 import Sequential
+from keras.layers                 import Dense, Activation, BatchNormalization, Dropout, LSTM
+from keras.layers                 import Conv2D
+from keras.layers                 import MaxPooling2D
+from keras.layers                 import Flatten
+from keras.callbacks              import EarlyStopping 
+from tensorflow.keras.optimizers  import SGD
+import matplotlib.pyplot as plt
+import numpy as np
+x_train = np.zeros((600,32,32,3))
+x_test = np.zeros((100,32,32,3))
+y_train = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9]
+y_test = [0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,8,8,8,8,8,8,8,8,8,8,9,9,9,9,9,9,9,9,9,9]
+for i in range(60):
+  x_train[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Dataset_10_loại_trai_cây/Buoi/'+ str(i+1) +'.jfif', target_size=(32, 32))
+  x_train[i] = img_to_array(x_train[i]) 
+for i in range(60,120):
+  x_train[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Dataset_10_loại_trai_cây/Cam/'+ str(i-59) +'.jfif', target_size=(32, 32))
+  x_train[i] = img_to_array(x_train[i]) 
+for i in range(120,180):
+  x_train[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Dataset_10_loại_trai_cây/Chom_chom/'+ str(i-119) +'.jfif', target_size=(32, 32))
+  x_train[i] = img_to_array(x_train[i]) 
+for i in range(180,240):
+  x_train[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Dataset_10_loại_trai_cây/Chuoi/'+ str(i-179) +'.jfif', target_size=(32, 32))
+  x_train[i] = img_to_array(x_train[i]) 
+for i in range(240,300):
+  x_train[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Dataset_10_loại_trai_cây/Dao/'+ str(i-239) +'.jfif', target_size=(32, 32))
+  x_train[i] = img_to_array(x_train[i]) 
+for i in range(300,360):
+  x_train[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Dataset_10_loại_trai_cây/Dâu/'+ str(i-299) +'.jfif', target_size=(32, 32))
+  x_train[i] = img_to_array(x_train[i]) 
+for i in range(360,420):
+  x_train[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Dataset_10_loại_trai_cây/Me/'+ str(i-359) +'.jfif', target_size=(32, 32))
+  x_train[i] = img_to_array(x_train[i]) 
+for i in range(420,480):
+  x_train[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Dataset_10_loại_trai_cây/Nho/'+ str(i-419) +'.jfif', target_size=(32, 32))
+  x_train[i] = img_to_array(x_train[i]) 
+for i in range(480,540):
+  x_train[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Dataset_10_loại_trai_cây/Sau_rieng/'+ str(i-479) +'.jfif', target_size=(32, 32))
+  x_train[i] = img_to_array(x_train[i]) 
+for i in range(540,600):
+  x_train[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Dataset_10_loại_trai_cây/Tao/'+ str(i-539) +'.jfif', target_size=(32, 32))
+  x_train[i] = img_to_array(x_train[i]) 
+for i in range(10):
+  x_test[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Dataset_10_loại_trai_cây/Buoi/'+ str(i+61) +'.jfif', target_size=(32, 32))
+  x_test[i] = img_to_array(x_test[i]) 
+for i in range(10,20):
+  x_test[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Dataset_10_loại_trai_cây/Cam/'+ str(i+51) +'.jfif', target_size=(32, 32))
+  x_test[i] = img_to_array(x_test[i]) 
+for i in range(20,30):
+  x_test[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Dataset_10_loại_trai_cây/Chom_chom/'+ str(i+41) +'.jfif', target_size=(32, 32))
+  x_test[i] = img_to_array(x_test[i]) 
+for i in range(30,40):
+  x_test[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Dataset_10_loại_trai_cây/Chuoi/'+ str(i+31) +'.jfif', target_size=(32, 32))
+  x_test[i] = img_to_array(x_test[i]) 
+for i in range(40,50):
+  x_test[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Dataset_10_loại_trai_cây/Dao/'+ str(i+21) +'.jfif', target_size=(32, 32))
+  x_test[i] = img_to_array(x_test[i]) 
+for i in range(50,60):
+  x_test[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Dataset_10_loại_trai_cây/Dâu/'+ str(i+11) +'.jfif', target_size=(32, 32))
+  x_test[i] = img_to_array(x_test[i]) 
+for i in range(60,70):
+  x_test[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Dataset_10_loại_trai_cây/Me/'+ str(i+1) +'.jfif', target_size=(32, 32))
+  x_test[i] = img_to_array(x_test[i]) 
+for i in range(70,80):
+  x_test[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Dataset_10_loại_trai_cây/Nho/'+ str(i-9) +'.jfif', target_size=(32, 32))
+  x_test[i] = img_to_array(x_test[i]) 
+for i in range(80,90):
+  x_test[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Dataset_10_loại_trai_cây/Sau_rieng/'+ str(i-19) +'.jfif', target_size=(32, 32))
+  x_test[i] = img_to_array(x_test[i]) 
+for i in range(90,100):
+  x_test[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Dataset_10_loại_trai_cây/Tao/'+ str(i-29) +'.jfif', target_size=(32, 32))
+  x_test[i] = img_to_array(x_test[i]) 
+x_train = x_train.reshape(600,32,32,3)
+x_test = x_test.reshape(100,32,32,3)
+x_train = x_train.astype('float32')
+x_test = x_test.astype('float32')
+
+x_train/=255 # Chia từ ảnh màu thành ảnh xám
+x_test/=255
+
+y_train = np_utils.to_categorical(y_train,10)
+y_test = np_utils.to_categorical(y_test,10)
+model = Sequential()
+###############################################
+model.add(Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same', input_shape=(32, 32, 3))) # 32 lần sử dụng bộ lọc, bộ lọc có kích thước là 3x3  
+# khai báo bộ lọc kernel và padding là same nghĩa là ảnh trước khi lọc và sau khi lọc phải cùng kích thước
+model.add(BatchNormalization())
+model.add(Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+model.add(BatchNormalization())
+model.add(MaxPooling2D((2, 2)))
+model.add(Dropout(0.2))
+##############################################
+model.add(Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+model.add(BatchNormalization())
+model.add(Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+model.add(BatchNormalization())	
+model.add(MaxPooling2D((2, 2)))
+model.add(Dropout(0.3))
+###############################################
+model.add(Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+model.add(BatchNormalization())
+model.add(Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+model.add(BatchNormalization())	
+model.add(MaxPooling2D((2, 2)))
+model.add(Dropout(0.4))
+###############################################
+model.add(Conv2D(128, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+model.add(BatchNormalization())
+model.add(Conv2D(128, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+model.add(BatchNormalization())	
+model.add(MaxPooling2D((2, 2)))
+model.add(Dropout(0.5))
+##############################################
+model.add(Flatten())
+model.add(Dense(128, activation='relu', kernel_initializer='he_uniform'))
+model.add(BatchNormalization())
+model.add(Dropout(0.5))	
+model.add(Dense(10, activation='sigmoid'))
+model.summary()
+opt=SGD(learning_rate=0.01,momentum=0.9)
+model.compile(loss='categorical_crossentropy',optimizer=opt, metrics=['accuracy'])
+history = model.fit(x_train,y_train,epochs=500,batch_size=64,validation_data=(x_test,y_test),verbose=1)
+model.save('10_Fruits_Recognization.h5')
+############################################
+score = model.evaluate(x_test,y_test,verbose=0)
+print('Test loss:', score[0])
+print('Test accuracy', score[1])
+##############################################
+from keras.preprocessing.image import load_img
+from keras.preprocessing.image import img_to_array
+from keras.models import load_model
+
+img3 = load_img('camtest.jfif', target_size=(32, 32))
+img3 = img_to_array(img3)
+img3 = img3.reshape(1, 32, 32, 3)
+img3 = img3.astype('float32')
+img3 = img3 / 255.0
+
+# load model
+model_final = load_model('10_Fruits_Recognization.h5')
+plt.imshow(img3.reshape(32,32,3), cmap='gray')
+# predict the class
+result = model.predict(img3.reshape(1,32,32,3))
+if np.argmax(result) == 0:
+   k = "Bưởi"
+elif np.argmax(result) == 1:
+   k = "Cam"
+elif np.argmax(result) == 2:
+   k = "Chôm chôm"
+elif np.argmax(result) == 3:
+   k = "Chuối"
+elif np.argmax(result) == 4:
+   k = "Đào"
+elif np.argmax(result) == 5:
+   k = "Dâu"
+elif np.argmax(result) == 6:
+   k = "Me"
+elif np.argmax(result) == 7:
+   k = "Nho"
+elif np.argmax(result) == 8:
+   k = "Sầu riêng"
+else:
+   k = "Táo"
+print('Giá trị dự đoán:', k)
+plt.show()
