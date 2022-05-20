@@ -1,0 +1,124 @@
+from keras.preprocessing.image import load_img
+from keras.preprocessing.image import img_to_array
+from keras.models import load_model
+import matplotlib.pyplot as plt
+import numpy as np
+from keras.utils                  import np_utils
+from keras.datasets               import cifar10
+from keras.utils                  import np_utils
+from keras.models                 import Sequential
+from keras.layers                 import Dense, Activation, BatchNormalization, Dropout, LSTM
+from keras.layers                 import Conv2D
+from keras.layers                 import MaxPooling2D
+from keras.layers                 import Flatten
+from keras.callbacks              import EarlyStopping 
+from tensorflow.keras.optimizers  import SGD
+import matplotlib.pyplot as plt
+import numpy as np
+//////////////////////////////////////
+x_train = np.zeros((180,32,32,3))
+x_test = np.zeros((30,32,32,3))
+y_train = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+y_test = [1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2]
+//////////////////////////////////////
+for i in range(60):
+  x_train[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Train/'+ str(i+1) +'.jpg', target_size=(32, 32))
+  x_train[i] = img_to_array(x_train[i]) 
+/////////////////////////////////////
+for i in range(60,180):
+  x_train[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Train/'+ str(i+1) +'.bmp', target_size=(32, 32))
+  x_train[i] = img_to_array(x_train[i]) 
+/////////////////////////////////////
+for i in range(10):
+  x_test[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Test/'+ str(i+1) +'.jpg', target_size=(32, 32))
+  x_test[i] = img_to_array(x_test[i]) 
+/////////////////////////////////////
+for i in range(10,30):
+  x_test[i] = load_img('/content/drive/MyDrive/Colab Notebooks/Trí tuệ nhân tạo/Test/'+ str(i+1) +'.bmp', target_size=(32, 32))
+  x_test[i] = img_to_array(x_test[i]) 
+/////////////////////////////////////
+x_train = x_train.reshape(180,32,32,3)
+x_test = x_test.reshape(30,32,32,3)
+x_train = x_train.astype('float32')
+x_test = x_test.astype('float32')
+
+x_train/=255 # Chia từ ảnh màu thành ảnh xám
+x_test/=255
+
+y_train = np_utils.to_categorical(y_train,3)
+y_test = np_utils.to_categorical(y_test,3)
+//////////////////////////////////////
+# Mô hình phân 3 lớp ẩn đơn giản
+model=Sequential()
+model.add(Dense(2024,kernel_initializer = 'normal' , activation='relu',input_shape=(3072,)))
+model.add(Dropout(0.2))
+model.add(Dense(2024,activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(3,activation='softmax'))
+model.summary()
+////////////////////////////////////
+# Mô hình với 3 lớp lọc và 2 lớp ẩn
+model = Sequential()
+model.add(Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same', input_shape=(32, 32, 3))) # 32 lần sử dụng bộ lọc, bộ lọc có kích thước là 3x3  
+# khai báo bộ lọc kernel và padding là same nghĩa là ảnh trước khi lọc và sau khi lọc phải cùng kích thước
+model.add(BatchNormalization())
+model.add(Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+model.add(BatchNormalization())
+model.add(MaxPooling2D((2, 2)))
+model.add(Dropout(0.2))
+model.add(Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+model.add(BatchNormalization())
+model.add(Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+model.add(BatchNormalization())	
+model.add(MaxPooling2D((2, 2)))
+model.add(Dropout(0.3))
+model.add(Conv2D(128, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+model.add(BatchNormalization())
+model.add(Conv2D(128, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
+model.add(BatchNormalization())
+model.add(MaxPooling2D((2, 2)))
+###############################################################3
+model.add(Dropout(0.4))
+model.add(Flatten())
+model.add(Dense(128, activation='relu', kernel_initializer='he_uniform'))
+model.add(BatchNormalization())
+model.add(Dropout(0.5))	
+model.add(Dense(3, activation='softmax'))
+model.summary()
+///////////////////////////////////////////
+opt=SGD(learning_rate=0.01,momentum=0.9)
+model.compile(loss='categorical_crossentropy',optimizer=opt, metrics=['accuracy'])
+history = model.fit(x_train,y_train,epochs=100,batch_size=64,validation_data=(x_test,y_test),verbose=1)
+model.save('Face_Detection_CNN.h5')
+///////////////////////////////////////////
+score = model.evaluate(x_test,y_test,verbose=0)
+print('Test loss:', score[0])
+print('Test accuracy', score[1])
+////////////////////////////////////////////
+from keras.preprocessing.image import load_img
+from keras.preprocessing.image import img_to_array
+from keras.models import load_model
+
+img3 = load_img('Tin.png', target_size=(32, 32))
+img3 = img_to_array(img3)
+img3 = img3.reshape(1, 32, 32, 3)
+img3 = img3.astype('float32')
+img3 = img3 / 255.0
+
+# load model
+model_final = load_model('Face_Detection_CNN.h5')
+plt.imshow(img3.reshape(32,32,3), cmap='gray')
+# predict the class
+result = model.predict(img3.reshape(1,32,32,3))
+if np.argmax(result) == 0:
+   k = "Huế"
+elif np.argmax(result) == 1:
+   k = "Tín"
+else:
+   k = "Tính"
+print('Giá trị dự đoán:', k)
+plt.show()
+  File "/tmp/ipykernel_19/1779633030.py", line 18
+    //////////////////////////////////////
+     ^
+SyntaxError: invalid syntax
