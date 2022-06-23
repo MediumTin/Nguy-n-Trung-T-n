@@ -1,0 +1,491 @@
+########################################################## Tạo thuật toán Fuzzy cho chỉ số BMI tiêu chuẩn ###################################
+import numpy as np
+import skfuzzy as fuzz
+import matplotlib.pyplot as plt
+from skfuzzy import control as ctrl
+# Khai báo input, output và range
+
+# Input
+BMI = ctrl.Antecedent(np.arange(15,30,0.01),'BMI') 
+
+# Output
+IdealBMI = ctrl.Consequent(np.arange(18.5,25,0.01),'IdealBMI')
+
+# Tạo hàm liên thuộc của BMI
+BMI['Skinny'] = fuzz.trimf(BMI.universe,[11.25,15,17.5])
+BMI['Thin'] = fuzz.trimf(BMI.universe,[16,17.75,19.5])
+BMI['Normal'] = fuzz.trimf(BMI.universe,[17.5,21.75,26])
+BMI['Overweight'] = fuzz.trimf(BMI.universe,[24,26,28])
+BMI['Obesity'] = fuzz.trimf(BMI.universe,[26.5,30,33.75])
+
+
+# Tạo hàm liên thuộc của Ideal_BMI
+IdealBMI['Increase_Weight'] = fuzz.trimf(IdealBMI.universe,[18.5,18.5,21.21])
+IdealBMI['Remain_Weight'] = fuzz.trimf(IdealBMI.universe,[19,21.75,24.46])
+IdealBMI['Reduce_Weight'] = fuzz.trimf(IdealBMI.universe,[22.29,25,25])
+
+# Lập các luật ràng buộc
+rule1=ctrl.Rule(BMI['Skinny']|BMI['Thin'],IdealBMI['Increase_Weight'])
+rule2=ctrl.Rule(BMI['Normal'],IdealBMI['Remain_Weight'])
+rule3=ctrl.Rule(BMI['Overweight']|BMI['Obesity'],IdealBMI['Reduce_Weight'])
+tipping_ctrl = ctrl.ControlSystem([rule1,rule2,rule3])
+tipping2 = ctrl.ControlSystemSimulation(tipping_ctrl)
+######################################################################### Tạo thuật toán Fuzzy cho bệnh tim mạch #######################################
+import numpy as np
+import skfuzzy as fuzz
+import matplotlib.pyplot as plt
+from skfuzzy import control as ctrl
+# Khai báo input, output và range
+
+# Input
+Cholesterol = ctrl.Antecedent(np.arange(0,1500,0.1),'Cholesterol') 
+Protein = ctrl.Antecedent(np.arange(0,100,0.01),'Protein') 
+Fat = ctrl.Antecedent(np.arange(0,100,0.01),'Fat') 
+Sodium = ctrl.Antecedent(np.arange(0,2000,0.1),'Sodium') 
+Sugar = ctrl.Antecedent(np.arange(0,100,0.01),'Sugar') 
+Carbonhydrate = ctrl.Antecedent(np.arange(0,100,0.01),'Carbonhydrate') 
+Fiber = ctrl.Antecedent(np.arange(0,50,0.01),'Fiber') 
+Fatty_trans = ctrl.Antecedent(np.arange(0,2000,0.1),'Fatty_trans') 
+Calories = ctrl.Antecedent(np.arange(0,1000,0.1),'Calories') 
+Axit_folic = ctrl.Antecedent(np.arange(0,500,0.1),'Axit_folic') 
+Vitamin_C = ctrl.Antecedent(np.arange(0,50,0.1),'Vitamin_C') 
+Vitamin_E = ctrl.Antecedent(np.arange(0,30,0.1),'Vitamin_E') 
+
+# Output
+Desition = ctrl.Consequent(np.arange(-20,120,0.01),'Desition')
+
+# Tạo hàm liên thuộc của Cholesterol
+Cholesterol['Low'] = fuzz.zmf(Cholesterol.universe,0,675)
+Cholesterol['High'] = fuzz.smf(Cholesterol.universe,75,1500)
+#Cholesterol.view()
+
+# Tạo hàm liên thuộc của Protein
+Protein['Low'] = fuzz.zmf(Protein.universe,0,100)
+Protein['High'] = fuzz.smf(Protein.universe,20,100)
+#Protein.view()
+
+# Tạo hàm liên thuộc của Fat
+Fat['Low'] = fuzz.zmf(Fat.universe,0,40)
+Fat['High'] = fuzz.smf(Fat.universe,10,70)
+#Fat.view()
+
+# Tạo hàm liên thuộc của Sodium
+Sodium['Low'] = fuzz.zmf(Sodium.universe,0,460)
+Sodium['High'] = fuzz.smf(Sodium.universe,108,740)
+#Sodium.view()
+
+# Tạo hàm liên thuộc của Sugar
+Sugar['Low'] = fuzz.zmf(Sugar.universe,0,55)
+Sugar['High'] = fuzz.smf(Sugar.universe,10,50)
+#Sugar.view()
+
+# Tạo hàm liên thuộc của Carbonhydrate
+Carbonhydrate['Low'] = fuzz.zmf(Carbonhydrate.universe,0,100)
+Carbonhydrate['High'] = fuzz.smf(Carbonhydrate.universe,0,100)
+#Carbonhydrate.view()
+
+# Tạo hàm liên thuộc của Fiber
+Fiber['High'] = fuzz.trimf(Fiber.universe,[0,50,50])
+#Fiber.view()
+
+# Tạo hàm liên thuộc của Fatty_trans
+Fatty_trans['Low'] = fuzz.zmf(Fatty_trans.universe,0,294)
+Fatty_trans['High'] = fuzz.smf(Fatty_trans.universe,100,215)
+#Fatty_trans.view()
+
+# Tạo hàm liên thuộc của Calories
+Calories['Low'] = fuzz.zmf(Calories.universe,0,400)
+Calories['High'] = fuzz.smf(Calories.universe,0,580)
+#Calories.view()
+
+# Tạo hàm liên thuộc của Axit_folic
+Axit_folic['High'] = fuzz.trimf(Axit_folic.universe,[0,500,500])
+
+# Tạo hàm liên thuộc của Vitamin_C
+Vitamin_C['High'] = fuzz.trimf(Vitamin_C.universe,[0,50,50])
+
+# Tạo hàm liên thuộc của Vitamin_E
+Vitamin_E['High'] = fuzz.trimf(Vitamin_E.universe,[0,30,30])
+# Tạo hàm liên thuộc của Desition
+Desition['No'] = fuzz.trimf(Desition.universe,[-20,-20,57])
+Desition['Yes'] = fuzz.trimf(Desition.universe,[43,120,120])
+#Desition.view()
+
+# Lập các luật ràng buộc
+rule1=ctrl.Rule(Cholesterol['Low']|Protein['Low']|Fat['Low']|Sodium['Low']|Sugar['Low']|Carbonhydrate['Low']|Fiber['High']|Fatty_trans['Low']|Calories['Low']|Axit_folic['High']|Vitamin_C['High']|Vitamin_E['High'],Desition['Yes'])
+rule2=ctrl.Rule(Cholesterol['High']|Protein['High']|Fat['High']|Sodium['High']|Sugar['High']|Carbonhydrate['High']|Fatty_trans['High']|Calories['High'],Desition['No'])
+tipping_ctrl = ctrl.ControlSystem([rule1,rule2])
+tipping = ctrl.ControlSystemSimulation(tipping_ctrl)
+############################################################################# Tạo thuật toán Fuzzy cho bệnh máu nhiễm mỡ ####################################
+import numpy as np
+import skfuzzy as fuzz
+import matplotlib.pyplot as plt
+from skfuzzy import control as ctrl
+# Khai báo input, output và range
+
+# Input
+Cholesterol = ctrl.Antecedent(np.arange(0,1500,0.1),'Cholesterol') 
+Protein = ctrl.Antecedent(np.arange(0,100,0.01),'Protein') 
+Fat = ctrl.Antecedent(np.arange(0,100,0.01),'Fat') 
+Sodium = ctrl.Antecedent(np.arange(0,2000,0.1),'Sodium') 
+Sugar = ctrl.Antecedent(np.arange(0,100,0.01),'Sugar') 
+Carbonhydrate = ctrl.Antecedent(np.arange(0,100,0.01),'Carbonhydrate') 
+Fiber = ctrl.Antecedent(np.arange(0,50,0.01),'Fiber') 
+Fatty_trans = ctrl.Antecedent(np.arange(0,2000,0.1),'Fatty_trans') 
+Calories = ctrl.Antecedent(np.arange(0,1000,0.1),'Calories') 
+Axit_folic = ctrl.Antecedent(np.arange(0,500,0.1),'Axit_folic') 
+
+# Output
+Desition = ctrl.Consequent(np.arange(-20,120,0.01),'Desition')
+
+# Tạo hàm liên thuộc của Cholesterol
+Cholesterol['Low'] = fuzz.zmf(Cholesterol.universe,0,500)     
+Cholesterol['High'] = fuzz.smf(Cholesterol.universe,100,1400)  
+#Cholesterol.view()
+
+# Tạo hàm liên thuộc của Protein
+Protein['Low'] = fuzz.zmf(Protein.universe,0,100)
+Protein['High'] = fuzz.smf(Protein.universe,20,100)
+
+# Tạo hàm liên thuộc của Fat
+Fat['Low'] = fuzz.zmf(Fat.universe,0,40)
+Fat['High'] = fuzz.smf(Fat.universe,10,70)
+
+# Tạo hàm liên thuộc của Sodium
+Sodium['Low'] = fuzz.zmf(Sodium.universe,0,460)
+Sodium['High'] = fuzz.smf(Sodium.universe,108,740)
+
+# Tạo hàm liên thuộc của Sugar
+Sugar['Low'] = fuzz.zmf(Sugar.universe,0,55)
+Sugar['High'] = fuzz.smf(Sugar.universe,10,50)
+
+# Tạo hàm liên thuộc của Carbonhydrate
+Carbonhydrate['Low'] = fuzz.zmf(Carbonhydrate.universe,0,80)
+Carbonhydrate['High'] = fuzz.smf(Carbonhydrate.universe,0,50)
+
+# Tạo hàm liên thuộc của Fiber
+Fiber['High'] = fuzz.trimf(Fiber.universe,[0,50,50])
+
+# Tạo hàm liên thuộc của Fatty_trans
+Fatty_trans['Low'] = fuzz.zmf(Fatty_trans.universe,0,117)
+Fatty_trans['High'] = fuzz.smf(Fatty_trans.universe,12.5,210)
+
+# Tạo hàm liên thuộc của Calories
+Calories['Low'] = fuzz.zmf(Calories.universe,0,630)
+Calories['High'] = fuzz.smf(Calories.universe,0,580)
+#Calories.view()
+
+# Tạo hàm liên thuộc của Axit_folic
+Axit_folic['High'] = fuzz.trimf(Axit_folic.universe,[0,500,500])
+
+# Tạo hàm liên thuộc của Desition
+Desition['No'] = fuzz.trimf(Desition.universe,[-20,-20,57])
+Desition['Yes'] = fuzz.trimf(Desition.universe,[43,120,120])
+
+# Lập các luật ràng buộc
+rule1=ctrl.Rule(Cholesterol['Low']|Protein['Low']|Fat['Low']|Sodium['Low']|Sugar['Low']|Carbonhydrate['Low']|Fiber['High']|Fatty_trans['Low']|Calories['Low']|Axit_folic['High'],Desition['Yes'])
+rule2=ctrl.Rule(Cholesterol['High']|Protein['High']|Fat['High']|Sodium['High']|Sugar['High']|Carbonhydrate['High']|Fatty_trans['High']|Calories['High'],Desition['No'])
+tipping_ctrl = ctrl.ControlSystem([rule1,rule2])
+tipping = ctrl.ControlSystemSimulation(tipping_ctrl)
+########################################################################## Tạo thuật toán Fuzzy cho người bình thường ################################################
+import numpy as np
+import skfuzzy as fuzz
+import matplotlib.pyplot as plt
+from skfuzzy import control as ctrl
+# Khai báo input, output và range
+
+# Input
+Cholesterol = ctrl.Antecedent(np.arange(0,1500,0.1),'Cholesterol') 
+Protein = ctrl.Antecedent(np.arange(0,100,0.01),'Protein') 
+Fat = ctrl.Antecedent(np.arange(0,100,0.01),'Fat') 
+Sodium = ctrl.Antecedent(np.arange(0,2000,0.1),'Sodium') 
+Sugar = ctrl.Antecedent(np.arange(0,100,0.01),'Sugar') 
+Carbonhydrate = ctrl.Antecedent(np.arange(0,100,0.01),'Carbonhydrate') 
+Fiber = ctrl.Antecedent(np.arange(0,50,0.01),'Fiber') 
+Fatty_trans = ctrl.Antecedent(np.arange(0,2000,0.1),'Fatty_trans') 
+Calories = ctrl.Antecedent(np.arange(0,1000,0.1),'Calories') 
+Axit_folic = ctrl.Antecedent(np.arange(0,500,0.1),'Axit_folic') 
+
+# Output
+Desition = ctrl.Consequent(np.arange(-20,120,0.01),'Desition')
+
+# Tạo hàm liên thuộc của Cholesterol
+Cholesterol['Low'] = fuzz.zmf(Cholesterol.universe,0,1700)    
+Cholesterol['High'] = fuzz.smf(Cholesterol.universe,100,1400)   
+#Cholesterol.view()
+
+# Tạo hàm liên thuộc của Protein
+Protein['Low'] = fuzz.zmf(Protein.universe,0,100)
+Protein['High'] = fuzz.smf(Protein.universe,20,100)
+#Protein.view()
+
+# Tạo hàm liên thuộc của Fat
+Fat['Low'] = fuzz.zmf(Fat.universe,0,80)
+Fat['High'] = fuzz.smf(Fat.universe,30,70)
+#Fat.view()
+
+
+# Tạo hàm liên thuộc của Sodium
+Sodium['Low'] = fuzz.zmf(Sodium.universe,0,1500)
+Sodium['High'] = fuzz.smf(Sodium.universe,500,1250)
+#Sodium.view()
+
+# Tạo hàm liên thuộc của Sugar
+Sugar['Low'] = fuzz.zmf(Sugar.universe,0,100)
+Sugar['High'] = fuzz.smf(Sugar.universe,30,80)
+#Sugar.view()
+
+# Tạo hàm liên thuộc của Carbonhydrate
+Carbonhydrate['Low'] = fuzz.zmf(Carbonhydrate.universe,0,80)
+Carbonhydrate['High'] = fuzz.smf(Carbonhydrate.universe,30,80)
+#Carbonhydrate.view()
+
+# Tạo hàm liên thuộc của Fiber
+Fiber['High'] = fuzz.trimf(Fiber.universe,[0,50,50])
+
+# Tạo hàm liên thuộc của Fatty_trans
+Fatty_trans['Low'] = fuzz.zmf(Fatty_trans.universe,0,1000)
+Fatty_trans['High'] = fuzz.smf(Fatty_trans.universe,250,750)
+#Fatty_trans.view()
+
+# Tạo hàm liên thuộc của Calories
+Calories['Low'] = fuzz.zmf(Calories.universe,0,630)
+Calories['High'] = fuzz.smf(Calories.universe,300,900)
+#Calories.view()
+
+# Tạo hàm liên thuộc của Axit_folic
+Axit_folic['High'] = fuzz.trimf(Axit_folic.universe,[0,500,500])
+
+# Tạo hàm liên thuộc của Desition
+Desition['No'] = fuzz.trimf(Desition.universe,[-20,-20,57])
+Desition['Yes'] = fuzz.trimf(Desition.universe,[43,120,120])
+
+# Lập các luật ràng buộc
+rule1=ctrl.Rule(Cholesterol['Low']|Protein['Low']|Fat['Low']|Sodium['Low']|Sugar['Low']|Carbonhydrate['Low']|Fiber['High']|Fatty_trans['Low']|Calories['Low']|Axit_folic['High'],Desition['Yes'])
+rule2=ctrl.Rule(Cholesterol['High']|Protein['High']|Fat['High']|Sodium['High']|Sugar['High']|Carbonhydrate['High']|Fatty_trans['High']|Calories['High'],Desition['No'])
+tipping_ctrl = ctrl.ControlSystem([rule1,rule2])
+tipping = ctrl.ControlSystemSimulation(tipping_ctrl)
+############################################################################ Code tổng thể chương trình #################################################
+#load library
+import pandas as pd
+import mysql.connector
+import serial, time,csv,decimal
+import numpy as np
+import io # import module to to use universal newline mode
+import time
+import Tim_mach_Fuzzy as TimMach
+import Mau_nhiem_mo_Fuzzy as MauNhiemMo
+import Binh_Thuong_Fuzzy as BinhThuong
+import Tang_huyet_ap_Fuzzy as TangHuyetAp
+import Ideal_BMI as IB
+
+mydb = mysql.connector.connect(host="127.0.0.1", user="root",database ="food_nutrition")
+mycursor = mydb.cursor()
+Health_inform = np.zeros(5,dtype = "float")
+Nutrition_estimation = np.zeros(18,dtype = "float")
+Calories_consumption = 0
+Cholesterol_consumption = 0
+Sodium_consumption = 0
+Protein_consumption = 0
+Acid_folic_consumption = 0
+Vitamin_A_consumption =0
+Vitamin_B12_consumption =0
+Vitamin_B6_consumtion =0
+Vitamin_C_consumtion =0
+Vitamin_D_consumtion =0
+Vitamin_E_consumtion =0
+Vitamin_K_consumtion =0
+Carbonhydrate_consumption =0
+Fiber_consumption =0
+Sugar_consumption =0
+Fat_consumption =0
+Fatty_trans_consumption =0
+Alcohol_consumption =0
+Caffeine_consumption =0
+Height = 0
+Weight = 0
+Sex = 0
+Physical = 0
+Illness = 0
+
+while True:
+    statement1 = "select * from health_information;"
+    mycursor.execute(statement1)
+    myresult = mycursor.fetchone()
+    for i in range(5): 
+        Health_inform[i] = myresult[i]
+    Height = Health_inform[0]
+    Weight = Health_inform[1]
+    Sex = Health_inform[2]
+    Physical = Health_inform[3]
+    Illness = Health_inform[4]
+    if(Sex ==  0):
+        if(Physical == 0):
+            Physical_activity_num = 1.3
+        elif(Physical == 1):
+            Physical_activity_num = 1.65
+        elif(Physical == 2):
+            Physical_activity_num = 1.76
+        elif(Physical == 3):
+            Physical_activity_num = 2.1
+    elif (Sex == 1):
+        if(Physical == 0):
+            Physical_activity_num = 1.3
+        elif(Physical == 1):
+            Physical_activity_num = 1.55
+        elif(Physical == 2):
+            Physical_activity_num = 1.7
+        elif(Physical == 3):
+            Physical_activity_num = 2.075
+    BMI = round(Weight/(Height*Height),1)
+    # Classify based on input information static
+    if(BMI < 17.0):
+        Body_status = 0  #"Skinny"
+        Ideal_BMI_ES = 19
+        Weight_recommendation = 0 # 'Increase Weight'
+    elif (BMI >= 17.0 and BMI<=18.5):
+        Body_status = 1   #"Thin"
+        Ideal_BMI_ES = 20
+        Weight_recommendation =  0 #'Increase Weight'
+    elif (BMI > 18.5 and BMI<=25.0):
+        Body_status =  2     #"Normal"
+        Ideal_BMI_ES = 21.75
+        Weight_recommendation =  1  #'Remain Weight'
+    elif (BMI > 25.0 and BMI<=27.0):
+        Body_status = 3    #"Overweight"
+        Ideal_BMI_ES = 23
+        Weight_recommendation = 2  #'Reduce Weight'
+    elif (BMI > 27.0 ):
+        Body_status =  4    #"Obesity"
+        Ideal_BMI_ES = 24
+        Weight_recommendation =  2   #'Reduce Weight'
+    Ideal_Body_Weight = round((Height*Height)*Ideal_BMI_ES, 1)
+    Basal_Metabolic_Rate = round(Ideal_Body_Weight*24,1)
+    
+    if((round(int(Ideal_Body_Weight))) < (round(int(Weight)))):
+        Weight_adjustment = -500
+    elif((round(int(Ideal_Body_Weight))) > (round(int(Weight)))):
+        Weight_adjustment = 500
+    elif((round(int(Ideal_Body_Weight))) == (round(int(Weight)))):
+        Weight_adjustment = 0
+        
+    Daily_Calories = round(Physical_activity_num*Basal_Metabolic_Rate + Weight_adjustment,1)
+    time.sleep(0.1)
+    statement2 ='update body_status_3 set BMI =' + str(BMI) +',Ideal_Weight=' + str(Ideal_Body_Weight) + ',Need_calories=' + str(Daily_Calories) + ',Recommendation=' + str(Weight_recommendation) + ',Status=' + str(Body_status) + ';'
+    mycursor.execute(statement2)
+    mydb.commit()
+    #print(Illness)
+    if(Illness == 0):     
+        # Bệnh máu nhiễm mỡ
+        time.sleep(0.1)
+        statement3 = "select * from nutrition_estimation;"
+        mycursor.execute(statement3)
+        myresult = mycursor.fetchone()
+        for i in range(18): 
+            Nutrition_estimation[i] = myresult[i]
+        MauNhiemMo.tipping.input['Cholesterol']= Nutrition_estimation[1]
+        MauNhiemMo.tipping.input['Protein']= Nutrition_estimation[11]
+        MauNhiemMo.tipping.input['Fat']= Nutrition_estimation[15]
+        MauNhiemMo.tipping.input['Sodium']= Nutrition_estimation[2]
+        MauNhiemMo.tipping.input['Sugar']= Nutrition_estimation[14]
+        MauNhiemMo.tipping.input['Carbonhydrate']= Nutrition_estimation[12]
+        MauNhiemMo.tipping.input['Fiber']= Nutrition_estimation[13]
+        MauNhiemMo.tipping.input['Fatty_trans']= Nutrition_estimation[16]
+        MauNhiemMo.tipping.input['Calories']= Nutrition_estimation[0]
+        MauNhiemMo.tipping.input['Axit_folic']= Nutrition_estimation[3]
+        MauNhiemMo.tipping.compute()
+        Result = round(MauNhiemMo.tipping.output['Desition'])
+        print('Máu nhiễm mỡ')
+        time.sleep(0.1)
+        statement4 ='update result_estimation set Result =' + str(Result) + ";"
+        mycursor.execute(statement4)
+        mydb.commit()
+    elif (Illness == 1):
+        # Bệnh tim mạch
+        time.sleep(0.1)
+        statement3 = "select * from nutrition_estimation;"
+        mycursor.execute(statement3)
+        myresult = mycursor.fetchone()
+        for i in range(18): 
+            Nutrition_estimation[i] = myresult[i]
+        TimMach.tipping.input['Cholesterol']= Nutrition_estimation[1]
+        TimMach.tipping.input['Protein']= Nutrition_estimation[11]
+        TimMach.tipping.input['Fat']= Nutrition_estimation[15]
+        TimMach.tipping.input['Sodium']= Nutrition_estimation[2]
+        TimMach.tipping.input['Sugar']= Nutrition_estimation[14]
+        TimMach.tipping.input['Carbonhydrate']= Nutrition_estimation[12]
+        TimMach.tipping.input['Fiber']= Nutrition_estimation[13]
+        TimMach.tipping.input['Fatty_trans']= Nutrition_estimation[16]
+        TimMach.tipping.input['Calories']= Nutrition_estimation[0]
+        TimMach.tipping.input['Axit_folic']= Nutrition_estimation[3]
+        TimMach.tipping.input['Vitamin_C']= Nutrition_estimation[7]
+        TimMach.tipping.input['Vitamin_E']= Nutrition_estimation[9]
+        TimMach.tipping.compute()
+        Result = round(TimMach.tipping.output['Desition'])
+        print('Tim mạch')
+        time.sleep(0.1)
+        statement4 ='update result_estimation set Result =' + str(Result) + ";"
+        mycursor.execute(statement4)
+        mydb.commit()
+    elif (Illness == 3):
+        # Bệnh tăng huyết áp
+        time.sleep(0.1)
+        statement3 = "select * from nutrition_estimation;"
+        mycursor.execute(statement3)
+        myresult = mycursor.fetchone()
+        for i in range(18): 
+            Nutrition_estimation[i] = myresult[i]
+        TangHuyetAp.tipping.input['Cholesterol']= Nutrition_estimation[1]
+        TangHuyetAp.tipping.input['Protein']= Nutrition_estimation[11]
+        TangHuyetAp.tipping.input['Fat']= Nutrition_estimation[15]
+        TangHuyetAp.tipping.input['Sodium']= Nutrition_estimation[2]
+        TangHuyetAp.tipping.input['Sugar']= Nutrition_estimation[14]
+        TangHuyetAp.tipping.input['Carbonhydrate']= Nutrition_estimation[12]
+        TangHuyetAp.tipping.input['Fiber']= Nutrition_estimation[13]
+        TangHuyetAp.tipping.input['Fatty_trans']= Nutrition_estimation[16]
+        TangHuyetAp.tipping.input['Calories']= Nutrition_estimation[0]
+        TangHuyetAp.tipping.input['Axit_folic']= Nutrition_estimation[3]
+        TangHuyetAp.tipping.compute()
+        Result = round(TangHuyetAp.tipping.output['Desition'])
+        print('Tăng huyết áp')
+        time.sleep(0.1)
+        statement4 ='update result_estimation set Result =' + str(Result) + ";"
+        mycursor.execute(statement4)
+        mydb.commit()
+    elif (Illness == 5):
+        # Người bình thường
+        time.sleep(0.1)
+        statement3 = "select * from nutrition_estimation;"
+        mycursor.execute(statement3)
+        myresult = mycursor.fetchone()
+        for i in range(18): 
+            Nutrition_estimation[i] = myresult[i]
+        BinhThuong.tipping.input['Cholesterol']= Nutrition_estimation[1]
+        BinhThuong.tipping.input['Protein']= Nutrition_estimation[11]
+        BinhThuong.tipping.input['Fat']= Nutrition_estimation[15]
+        BinhThuong.tipping.input['Sodium']= Nutrition_estimation[2]
+        BinhThuong.tipping.input['Sugar']= Nutrition_estimation[14]
+        BinhThuong.tipping.input['Carbonhydrate']= Nutrition_estimation[12]
+        BinhThuong.tipping.input['Fiber']= Nutrition_estimation[13]
+        BinhThuong.tipping.input['Fatty_trans']= Nutrition_estimation[16]
+        BinhThuong.tipping.input['Calories']= Nutrition_estimation[0]
+        BinhThuong.tipping.input['Axit_folic']= Nutrition_estimation[3]
+        BinhThuong.tipping.compute()
+        Result = round(BinhThuong.tipping.output['Desition'])
+        print('Người bình thường')
+        time.sleep(0.1)
+        statement4 ='update result_estimation set Result =' + str(Result) + ";"
+        mycursor.execute(statement4)
+        mydb.commit()
+
+    
+
+
+
+
+
+
+
+
+
+
